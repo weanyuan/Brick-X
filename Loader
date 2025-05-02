@@ -22,10 +22,18 @@ local TBB = {
 
 
 function TBB:Loadout(Loadout)
-	local Type = Loadout["Type"]
-	local Slots = Loadout["Slots"]
+	local Type = {}
+	local Slots = {}
 	local Base = Loadout["Base"]
-	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer(Type,Slots,Base)
+	for i,v in ipairs(Loadout["Type"]) do
+		table.insert(Type,(#Type + 1),{"Slot"..i,v})
+	end
+	
+	for i,v in ipairs(Loadout["Slots"]) do
+		table.insert(Slots,(#Slots + 1),{"Slot"..i,v})
+	end
+	
+	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer({Type,Slots,Base})
 end
 
 function TBB:Stage(args)
@@ -35,7 +43,7 @@ function TBB:Stage(args)
 end
 
 function TBB:Spawn(slot,Time)
-	table.insert(TBB.SpawnData,#TBB.SpawnData + 1,{slot,Time})
+	table.insert(TBB.SpawnData,(#TBB.SpawnData + 1),{slot,Time})
 end
 
 
@@ -68,7 +76,8 @@ Main:Button({
 				local slot = v[1]
 				local Time = v[2]
 				task.wait(Time)
-				local Price = string.gsub(game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot).CostText.Text, "%D", "")
+				local oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild("Slot"..slot).CostText.Text)
+				local Price = string.gsub(oPrice,"%D", "")
 				if Money >= Price then
 					game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer("Slot"..slot)
 					
