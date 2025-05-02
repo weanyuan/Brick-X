@@ -30,7 +30,7 @@ end
 
 function TBB:Stage(args)
 	print(unpack(args))
-	table.insert(TBB.Stage,unpack(args))
+	table.insert(TBB["Stage"],unpack(args))
 end
 
 function TBB:Spawn(slot,Time)
