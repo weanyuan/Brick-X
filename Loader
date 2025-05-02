@@ -1,4 +1,3 @@
---Made by weanyuan
 --------
 local InsertService = game:GetService("InsertService")
 
@@ -29,8 +28,14 @@ function TBB:Loadout(Loadout)
 	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer(Type,Slots,Base)
 end
 
-function TBB:Stage(args)
-	table.insert(TBB.Stage,unpack(args))
+function TBB:Stage(stagev1,stagev2,stagev3,stagev4,stagev5,stagev6,stagev7)
+	table.insert(TBB.Stage,stagev1)
+	table.insert(TBB.Stage,stagev2)
+	table.insert(TBB.Stage,stagev3)
+	table.insert(TBB.Stage,stagev4)
+	table.insert(TBB.Stage,stagev5)
+	table.insert(TBB.Stage,stagev6)
+	table.insert(TBB.Stage,stagev7)
 end
 
 function TBB:Spawn(slot,Time)
