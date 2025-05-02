@@ -33,7 +33,7 @@ function TBB:Loadout(Loadout)
 		table.insert(Slots,(#Slots + 1),{"Slot"..i,v})
 	end
 	
-	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer({Type,Slots,Base})
+	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer({Type = Type,Slots = Slots,Base = Base})
 end
 
 function TBB:Stage(args)
@@ -76,22 +76,42 @@ Main:Button({
 				local slot = v[1]
 				local Time = v[2]
 				task.wait(Time)
-				local oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild("Slot"..slot).CostText.Text)
-				local Price = string.gsub(oPrice,"%D", "")
-				if Money >= Price then
-					game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer("Slot"..slot)
-					
-					Timer = tick()
-				else
-					repeat task.wait() until Money > Price
-					game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer("Slot"..slot)
-					local mistaketime = (tick() - Timer) - Time
-					Timer = tick()
-					if mistaketime > .1 then
-						warn("MISTAKE "..mistaketime)
+				local oPrice
+				if slot ~= "Bank" and slot ~= "Cannon" then
+				    if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Visible then
+					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild("Slot"..slot)).CostText.Text
+				    else
+					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild("Slot"..slot)).CostText.Text
 					end
-					
-					
+				elseif slot == "Bank" then
+					oPrice = game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.BankButton.Upgrade.Text
+				end
+				
+				if slot == "Cannon" then
+					if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible then
+						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+					else
+						repeat task.wait() until Money.Text > game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible
+						local mistaketime = (tick() - Timer) - Time
+						Timer = tick()
+						if mistaketime > .1 then
+							warn("MISTAKE "..mistaketime)
+						end
+					end
+				else
+					local Price = string.gsub(oPrice,"%D", "")
+					if Money.Text >= Price then
+						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						Timer = tick()
+					else
+						repeat task.wait() until Money.Text > Price
+						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						local mistaketime = (tick() - Timer) - Time
+						Timer = tick()
+						if mistaketime > .1 then
+							warn("MISTAKE "..mistaketime)
+						end
+					end
 				end
 
 			 end
