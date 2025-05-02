@@ -45,7 +45,7 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 					end
 					LoadoutString = LoadoutString.."},\n Type = {"
 					for i,v in ipairs(Loadout["Type"]) do
-						LoadoutString = LoadoutString..tostring(v)..","
+						LoadoutString = LoadoutString..'"'..tostring(v)..'"'..","
 					end
 					LoadoutString = LoadoutString.."}\n}"
 					
@@ -56,7 +56,7 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 					
 					for i,v in ipairs(Data) do
 						local value1,value2 = unpack(v)
-						local TempString = "TBB:Spawn("..tostring(value1)..","..tostring(value2)..")".."\n"
+						local TempString = "TBB:Spawn("..'"'..tostring(value1)..'"'..","..tostring(value2)..")".."\n"
 						String = String..TempString
 					end
 					
