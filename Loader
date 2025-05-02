@@ -25,7 +25,9 @@ function TBB:Loadout(Loadout)
 	local Type = {}
 	local Slots = {}
 	local Base = Loadout["Base"]
+	
 	for i,v in ipairs(Loadout["Type"]) do
+		print(v)
 		table.insert(Type,(#Type + 1),{"Slot"..i,v})
 	end
 	
@@ -79,9 +81,9 @@ Main:Button({
 				local oPrice
 				if slot ~= "Bank" and slot ~= "Cannon" then
 				    if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Visible then
-					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild("Slot"..slot)).CostText.Text
+					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
 				    else
-					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild("Slot"..slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild("Slot"..slot)).CostText.Text
+					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild(..slot)).CostText.Text
 					end
 				elseif slot == "Bank" then
 					oPrice = game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.BankButton.Upgrade.Text
