@@ -35,7 +35,7 @@ function TBB:Stage(args)
 end
 
 function TBB:Spawn(slot,Time)
-	table.insert(TBB.SpawnData,{slot,Time})
+	table.insert(TBB.SpawnData,#TBB.SpawnData + 1,{slot,Time})
 end
 
 
