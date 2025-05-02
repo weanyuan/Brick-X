@@ -13,6 +13,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ReGui = require(ReplicatedStorage.ReGui)
 ReGui:Init()]]
+local debug = false
 ----------
 local Timer
 local Money
@@ -124,6 +125,7 @@ end
 local function PlrSpawn(slot)
 	local cooldown = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 	table.insert(InCooldown,(#InCooldown + 1),slot)
+	print(unpack(InCooldown))
 	task.delay(cooldown,function()
 		table.remove(InCooldown,table.find(InCooldown,slot))
 	end)
