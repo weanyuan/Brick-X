@@ -29,8 +29,9 @@ function TBB:Loadout(Loadout)
 end
 
 function TBB:Stage(args)
-	print(unpack(args))
-	table.insert(TBB.StageData,unpack(args))
+	for i,v in ipairs(args) do
+		table.insert(TBB.StageData,v)
+	end
 end
 
 function TBB:Spawn(slot,Time)
