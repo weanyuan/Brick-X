@@ -1,4 +1,5 @@
 --------
+--[[
 local InsertService = game:GetService("InsertService")
 
 local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
@@ -8,6 +9,11 @@ local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
 ReGui:Init({
 	Prefabs = InsertService:LoadLocalAsset(PrefabsId)
 })
+]]
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ReGui = require(ReplicatedStorage.ReGui)
+ReGui:Init()
 ----------
 local Timer
 local Money
@@ -127,15 +133,15 @@ AutoFarmList:Button({
 			for i,v in ipairs(TBB.SpawnData) do
 				local slot = v[1]
 				local Time = v[2]
-				local oPrice
+				local Price
 				if slot ~= "Bank" and slot ~= "Cannon" then
 					if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Visible then
-						oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
+						Price = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
 					else
-						oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
+						Price = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
 					end
 				elseif slot == "Bank" then
-					oPrice = game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.BankButton.Upgrade.Text
+					Price = game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.BankButton.Upgrade.Text
 				end
 				task.wait(Time)
 				
@@ -149,15 +155,14 @@ AutoFarmList:Button({
 						SpawnMessage(slot,Time)
 					end
 				else
-					local Price = string.gsub(oPrice,"%D", "")
-					print(Price)
-                                        print(tonumber(Price))
-					if tonumber(Money.Text) >= tonumber(Price) then
+
+					
+					if Money.Text >= Price then
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 						Timer = tick()
 						SpawnMessage(slot,Time)
 					else
-						repeat task.wait() until tonumber(Money.Text) > tonumber(Price)
+						repeat task.wait() until Money.Text > Price
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 						SpawnMessage(slot,Time)
 					end
