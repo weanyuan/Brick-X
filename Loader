@@ -167,11 +167,11 @@ AutoFarmList:Button({
 				else
 
 					
-					if Money.Text >= Price and not InCooldown[slot] then
+					if Money.Text >= Price and not table.find(InCooldown,slot) then
 						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					else
-						repeat task.wait() until Money.Text >= Price and not InCooldown[slot]
+						repeat task.wait() until Money.Text >= Price and not table.find(InCooldown,slot)
 						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					end
