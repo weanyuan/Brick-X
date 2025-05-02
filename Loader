@@ -19,7 +19,7 @@ local TBB = {
 	StageData = {}
 }
 
-
+--TBB Module
 
 function TBB:Loadout(Loadout)
 	local Type = {}
@@ -47,8 +47,43 @@ end
 function TBB:Spawn(slot,Time)
 	table.insert(TBB.SpawnData,(#TBB.SpawnData + 1),{slot,Time})
 end
+--<< UI >>
+
+--State
+local State = ReGui:TabsWindow({
+	Title = "State",
+	Size = UDim2.fromOffset(300, 200),
+	Position = UDim2.fromScale(.1,.5)
+})
+
+local StateTab = State:CreateTab({
+	Name = "State"
+})
+
+local Console = State:CreateTab({
+	Name = "Console"
+})
+
+StateTab:BulletText({
+	Padding = 5,
+	Rows = {"Tip:Drag the bottom \nright corner to resize UI"}
+})
+
+local Exp = StateTab:BulletText({
+	Padding = 5,
+	Icon = "",
+	Rows = {"0"}
+})
+
+local Brick = StateTab:BulletText({
+	Padding = 5,
+	Icon = "",
+	Rows = {"0"}
+})
 
 
+
+--Main
 local Window = ReGui:TabsWindow({
 	Title = "Main",
 	Size = UDim2.fromOffset(300, 200),
@@ -60,12 +95,27 @@ local Main = Window:CreateTab({
 
 })
 
-local Recorder = Window:CreateTab({
-	Name = "Recorder"
-
+local AutoFarmList = Main:CollapsingHeader({
+   Title = "AutoFarm"
 })
 
-Main:Button({
+local AutoStart = AutoFarmList:Checkbox({
+	Label = "Auto Start Battle",
+	Value = false,
+})
+
+local function SpawnMessage(slot,Time)
+	local SpawnTime = tick() - Timer
+	local mistaketime = SpawnTime - Time
+	Timer = tick()
+	if mistaketime > .1 then
+		warn("Spawn "..slot.." "..SpawnTime.." MISTAKE "..mistaketime)
+	else
+		print("Spawn "..slot.." "..SpawnTime)
+	end
+end
+
+AutoFarmList:Button({
 	Text = "Start",
 	Callback = function()
 		game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("StartBattle"):InvokeServer(unpack(TBB.StageData))
@@ -92,35 +142,43 @@ Main:Button({
 				if slot == "Cannon" then
 					if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible then
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						SpawnMessage(slot,Time)
 					else
 						repeat task.wait() until Money.Text > game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible
-						local mistaketime = (tick() - Timer) - Time
-						Timer = tick()
-						if mistaketime > .1 then
-							warn("MISTAKE "..mistaketime)
-						end
+						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						SpawnMessage(slot,Time)
 					end
 				else
 					local Price = string.gsub(oPrice,"%D", "")
 					if Money.Text >= Price then
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 						Timer = tick()
+						SpawnMessage(slot,Time)
 					else
 						repeat task.wait() until Money.Text > Price
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
-						local mistaketime = (tick() - Timer) - Time
-						Timer = tick()
-						if mistaketime > .1 then
-							warn("MISTAKE "..mistaketime)
-						end
+						SpawnMessage(slot,Time)
 					end
 				end
 
-			 end
+			end
+			
+		end)
+		
+		task.spawn(function()
+			while AutoStart.Value do
+				task.wait()
+				game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("StartBattle"):InvokeServer(unpack(TBB.StageData))
+			end
 		end)
 	end,
 })
 
+--Recorder
+local Recorder = Window:CreateTab({
+	Name = "Recorder"
+
+})
 Recorder:Label({Text = "Recorder"})
 Recorder:Button({
 	Text = "Recorder",
@@ -128,5 +186,11 @@ Recorder:Button({
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Recorder"))()
 	end,
 })
+
+
+
+
+
+
 
 return TBB
