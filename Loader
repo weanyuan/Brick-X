@@ -1,5 +1,4 @@
 --------
-
 local InsertService = game:GetService("InsertService")
 
 local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
@@ -9,13 +8,17 @@ local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
 ReGui:Init({
 	Prefabs = InsertService:LoadLocalAsset(PrefabsId)
 })
+--[[
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-
+local ReGui = require(ReplicatedStorage.ReGui)
+ReGui:Init()]]
 ----------
 local Timer
 local Money
 local Stage
 
+local InCooldown = {}
 local TBB = {
 	SpawnData = {},
 	LoadoutData = {},
@@ -118,6 +121,14 @@ local function SpawnMessage(slot,Time)
 	end
 end
 
+local function PlrSpawn(slot)
+	local cooldown = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+	table.insert(InCooldown,(#InCooldown + 1),slot)
+	task.delay(cooldown,function()
+		table.remove(InCooldown,table.find(InCooldown,slot))
+	end)
+end
+
 AutoFarmList:Button({
 	Text = "Start",
 	Callback = function()
@@ -144,23 +155,22 @@ AutoFarmList:Button({
 				
 				if slot == "Cannon" then
 					if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible then
-						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					else
 						repeat task.wait() until Money.Text > game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.CannonButton.CostText.Visible
-						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					end
 				else
 
 					
-					if Money.Text >= Price then
-						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
-						Timer = tick()
+					if Money.Text >= Price and not InCooldown[slot] then
+						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					else
-						repeat task.wait() until Money.Text > Price
-						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
+						repeat task.wait() until Money.Text >= Price and not InCooldown[slot]
+						PlrSpawn(slot)
 						SpawnMessage(slot,Time)
 					end
 				end
