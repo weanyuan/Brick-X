@@ -29,6 +29,7 @@ function TBB:Loadout(Loadout)
 end
 
 function TBB:Stage(stagev1,stagev2,stagev3,stagev4,stagev5,stagev6,stagev7)
+	print(stagev1)
 	table.insert(TBB.Stage,stagev1)
 	table.insert(TBB.Stage,stagev2)
 	table.insert(TBB.Stage,stagev3)
