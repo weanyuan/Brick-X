@@ -53,7 +53,7 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 					
 					String = String.."TBB:Loadout("..LoadoutString..")\n"
 					local stagev1,stagev2,stagev3,stagev4,stagev5,stagev6,stagev7 = unpack(Stage)
-					String = String.."TBB:Stage({"..stagev1..","..stagev2..","..stagev3..","..stagev4..","..stagev5..","..stagev6..","..stagev7.."})\n"
+					String = String.."TBB:Stage({"..tostring(stagev1)..","..tostring(stagev2)..","..tostring(stagev3)..","..tostring(stagev4)..","..tostring(stagev5)..",".."{}"..","..tostring(stagev7).."})\n"
 					
 					for i,v in ipairs(Data) do
 						local value1,value2 = unpack(v)
