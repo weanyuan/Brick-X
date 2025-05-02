@@ -30,7 +30,7 @@ end
 
 function TBB:Stage(args)
 	for i,v in ipairs(args) do
-		table.insert(TBB.StageData,v)
+		table.insert(TBB.StageData,i,v)
 	end
 end
 
