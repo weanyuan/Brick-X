@@ -1,1 +1,100 @@
 --Made by weanyuan
+--------
+local InsertService = game:GetService("InsertService")
+
+local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
+local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
+
+--// Declare the Prefabs asset
+ReGui:Init({
+	Prefabs = InsertService:LoadLocalAsset(PrefabsId)
+})
+----------
+local Timer
+local Money
+local Stage
+
+local TBB = {
+	Spawn = {},
+	Loadout = {},
+	Stage = {}
+}
+
+
+
+function TBB:Loadout(Loadout)
+	local Type = Loadout["Type"]
+	local Slots = Loadout["Slots"]
+	local Base = Loadout["Base"]
+	game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("SaveLoadout"):FireServer(Type,Slots,Base)
+end
+
+function TBB:Stage(args)
+	table.insert(TBB.Stage,unpack(args))
+end
+
+function TBB:Spawn(slot,Time)
+	table.insert(TBB.Spawn,{slot,Time})
+end
+
+
+local Window = ReGui:TabsWindow({
+	Title = "Main",
+	Size = UDim2.fromOffset(300, 200),
+	Position = UDim2.fromScale(.5,.5)
+}) --> Canvas & WindowClass
+
+local Main = Window:CreateTab({
+	Name = "Main"
+
+})
+
+local Recorder = Window:CreateTab({
+	Name = "Recorder"
+
+})
+
+Main:Button({
+	Text = "Start",
+	Callback = function()
+		game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("StartBattle"):InvokeServer(unpack(TBB.Stage))
+		repeat task.wait() until workspace.NPCFolders.BaseFolder:FindFirstChild("Red Base")
+		Timer = tick()
+		Money = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("BattleScreen").Info.BankText
+
+		task.spawn(function()
+			for i,v in ipairs(TBB.Spawn) do
+				local slot = v[1]
+				local Time = v[2]
+				task.wait(Time)
+				local Price = string.gsub(game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild("Slot"..slot).CostText.Text, "%D", "")
+				if Money >= Price then
+					game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer("Slot"..slot)
+					
+					Timer = tick()
+				else
+					repeat task.wait() until Money > Price
+					game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer("Slot"..slot)
+					local mistaketime = (tick() - Timer) - Time
+					Timer = tick()
+					if mistaketime > .1 then
+						warn("MISTAKE "..mistaketime)
+					end
+					
+					
+				end
+
+			 end
+		end)
+	end,
+})
+
+Recorder:Label({Text = "Recorder"})
+Recorder:Button({
+	Text = "Recorder",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Recorder"))()
+	end,
+})
+
+return TBB
