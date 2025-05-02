@@ -1,1 +1,84 @@
+local Data = {}
+local Loadout = {}
+local Timer
+local StartBattle
+local PlayerSpawn
+local Stage
+
+
+
+StartBattle = hookmetamethod(game,"__namecall",function(self,...)
+	local args = {...}
+	if getnamecallmethod() == "InvokeServer" and self.Name == "StartBattle" then
+		task.spawn(function()
+			repeat task.wait() until workspace.NPCFolders.BaseFolder:FindFirstChild("Red Base")
+			local event
+			Timer = tick()
+			for index,value in ipairs(game:GetService("Players").LocalPlayer.PlayerData.Loadout:GetChildren()) do
+				Loadout[value.Name] = {}
+				-- Base Slots Type
+				for i,v in ipairs(value:GetChildren()) do
+					if v:IsA("NumberValue") or v:IsA("StringValue") then
+						if value.Name == "Base" then
+							Loadout[value.Name]["Cannon"] = v.Value
+							Loadout[value.Name]["Bank"] = v.Value
+						else
+							table.insert(Loadout[value.Name],v.Value)
+						end
+						
+					end
+				end
+			end
+			Stage = args
+			event = workspace.NPCFolders.BaseFolder:WaitForChild("Red Base"):WaitForChild("Humanoid").HealthChanged:Connect(function(hp)
+				if hp <= 0 then
+					event:Disconnect()
+					print("DEAD")
+					local String = "--v0.1".."\n".."local TBB = loadstring(game:HttpGet('https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Loader'))()".."\n"
+					local LoadoutString = "\n{Base = {"
+					
+					for i,v in ipairs(Loadout["Base"]) do
+						LoadoutString = LoadoutString..tostring(v)..","
+					end
+					LoadoutString = LoadoutString.."},\n Slots = {"
+					for i,v in ipairs(Loadout["Slots"]) do
+						LoadoutString = LoadoutString..tostring(v)..","
+					end
+					LoadoutString = LoadoutString.."},\n Type = {"
+					for i,v in ipairs(Loadout["Type"]) do
+						LoadoutString = LoadoutString..tostring(v)..","
+					end
+					LoadoutString = LoadoutString.."}\n}"
+					
+					
+					String = String.."TBB:Loadout("..LoadoutString..")\n"
+					String = String.."TBB:Stage("..Stage..")\n"
+					
+					for i,v in ipairs(Data) do
+						local value1,value2 = unpack(v)
+						local TempString = "TBB:Spawn("..tostring(value1)..","..tostring(value2)..")".."\n"
+						String = String..TempString
+					end
+					
+					setclipboard(String)
+				end
+			end)
+		end)
+	end
+	return StartBattle(self,unpack(args))
+end)
+
+PlayerSpawn = hookmetamethod(game,"__namecall",function(self,...)
+	local args = {...}
+	if getnamecallmethod() == "InvokeServer" and self.Name == "PlayerSpawn" then
+		task.spawn(function()
+			print("Spawn")
+			local SpawnTime = tick() - Timer
+			Timer = tick()
+			table.insert(Data,{args[1],SpawnTime})
+		end)
+	end
+	return PlayerSpawn(self,unpack(args))
+end)
+
 
