@@ -152,12 +152,12 @@ AutoFarmList:Button({
 					local Price = string.gsub(oPrice,"%D", "")
 					print(Price)
                                         print(tonumber(Price))
-					if Money.Text >= tonumber(Price) then
+					if tonumber(Money.Text) >= tonumber(Price) then
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 						Timer = tick()
 						SpawnMessage(slot,Time)
 					else
-						repeat task.wait() until Money.Text > tonumber(Price)
+						repeat task.wait() until tonumber(Money.Text) > tonumber(Price)
 						game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("PlayerSpawn"):InvokeServer(slot)
 						SpawnMessage(slot,Time)
 					end
