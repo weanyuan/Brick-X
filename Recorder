@@ -52,7 +52,8 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 					
 					
 					String = String.."TBB:Loadout("..LoadoutString..")\n"
-					String = String.."TBB:Stage("..Stage..")\n"
+					local stagev1,stagev2,stagev3,stagev4,stagev5,stagev6,stagev7 = unpack(Stage)
+					String = String.."TBB:Stage({"..stagev1..","..stagev2..","..stagev3..","..stagev4..","..stagev5..","..stagev6..","..stagev7.."})\n"
 					
 					for i,v in ipairs(Data) do
 						local value1,value2 = unpack(v)
@@ -80,5 +81,4 @@ PlayerSpawn = hookmetamethod(game,"__namecall",function(self,...)
 	end
 	return PlayerSpawn(self,unpack(args))
 end)
-
 
