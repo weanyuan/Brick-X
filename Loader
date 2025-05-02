@@ -14,9 +14,9 @@ local Money
 local Stage
 
 local TBB = {
-	Spawn = {},
-	Loadout = {},
-	Stage = {}
+	SpawnData = {},
+	LoadoutData = {},
+	StageData = {}
 }
 
 
@@ -30,11 +30,11 @@ end
 
 function TBB:Stage(args)
 	print(unpack(args))
-	table.insert(TBB["Stage"],unpack(args))
+	table.insert(TBB.StageData,unpack(args))
 end
 
 function TBB:Spawn(slot,Time)
-	table.insert(TBB.Spawn,{slot,Time})
+	table.insert(TBB.SpawnData,{slot,Time})
 end
 
 
@@ -57,13 +57,13 @@ local Recorder = Window:CreateTab({
 Main:Button({
 	Text = "Start",
 	Callback = function()
-		game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("StartBattle"):InvokeServer(unpack(TBB.Stage))
+		game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteFunction"):WaitForChild("StartBattle"):InvokeServer(unpack(TBB.StageData))
 		repeat task.wait() until workspace.NPCFolders.BaseFolder:FindFirstChild("Red Base")
 		Timer = tick()
 		Money = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("BattleScreen").Info.BankText
 
 		task.spawn(function()
-			for i,v in ipairs(TBB.Spawn) do
+			for i,v in ipairs(TBB.SpawnData) do
 				local slot = v[1]
 				local Time = v[2]
 				task.wait(Time)
