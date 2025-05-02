@@ -83,7 +83,7 @@ Main:Button({
 				    if game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Visible then
 					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.MobileSpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
 				    else
-					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild(..slot)).CostText.Text
+					oPrice = (game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar1:FindFirstChild(slot) or game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.SpawnMenu.Bar2:FindFirstChild(slot)).CostText.Text
 					end
 				elseif slot == "Bank" then
 					oPrice = game:GetService("Players").LocalPlayer.PlayerGui.BattleScreen.BankButton.Upgrade.Text
