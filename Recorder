@@ -18,8 +18,8 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 				Loadout[value.Name] = {}
 				-- Base Slots Type
 				if value.Name == "Base" then
-					Loadout[value.Name]["Cannon"] = value.Cannon.Value
-					Loadout[value.Name]["Bank"] = value.Bank.Value
+					Loadout[value.Name][1] = value.Cannon.Value
+					Loadout[value.Name][2] = value.Bank.Value
 				end
 				for i,v in ipairs(value:GetChildren()) do
 					if v:IsA("NumberValue") or v:IsA("StringValue") then
@@ -35,9 +35,10 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 					local String = "--v0.1".."\n".."local TBB = loadstring(game:HttpGet('https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Loader'))()".."\n"
 					local LoadoutString = "\n{Base = {"
 					
-					for i,v in ipairs(Loadout["Base"]) do
-						LoadoutString = LoadoutString..tostring(v)..","
-					end
+
+					LoadoutString = LoadoutString.."Cannon ="..Loadout["Base"][1]..","
+					LoadoutString = LoadoutString.."Bank ="..Loadout["Base"][2]
+					
 					LoadoutString = LoadoutString.."},\n Slots = {"
 					for i,v in ipairs(Loadout["Slots"]) do
 						LoadoutString = LoadoutString..tostring(v)..","
