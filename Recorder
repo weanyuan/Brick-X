@@ -1,4 +1,4 @@
---[[
+
 local InsertService = game:GetService("InsertService")
 
 local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
@@ -8,13 +8,13 @@ local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
 ReGui:Init({
 	Prefabs = InsertService:LoadLocalAsset(PrefabsId)
 })
-]]
 
+--[[
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ReGui = require(ReplicatedStorage.ReGui)
 ReGui:Init()
-
+]]
 local Closed = false
 
 local Window = ReGui:Window({
