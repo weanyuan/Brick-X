@@ -1,3 +1,49 @@
+--[[
+local InsertService = game:GetService("InsertService")
+
+local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
+local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
+
+--// Declare the Prefabs asset
+ReGui:Init({
+	Prefabs = InsertService:LoadLocalAsset(PrefabsId)
+})
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ReGui = require(ReplicatedStorage.ReGui)
+ReGui:Init()
+
+local Closed = false
+
+local Window = ReGui:Window({
+	Title = "Recorder",
+	Size = UDim2.fromOffset(300, 200),
+	Position = UDim2.fromScale(.5,.5),
+	CloseCallback = function()
+		Closed = true
+	end,
+})
+Window:Separator({
+	Text = "Last operation:"
+})
+
+local LastOperation = Window:Label({
+	Text = "not started yet"
+})
+
+Window:Label({Text = ""})
+
+
+local RecordName = Window:InputText({
+	Value = "",
+	Label = "Input record file's name",
+	Placeholder = "TBB-X",
+	Size = UDim2.new(0.25, 0,0, 19)
+})
+
+local String = "--v0.1".."\n".."local TBB = loadstring(game:HttpGet('https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Loader'))()".."\n"
 local Data = {}
 local Loadout = {}
 local Timer
@@ -9,7 +55,7 @@ local Stage
 
 StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 	local args = {...}
-	if getnamecallmethod() == "InvokeServer" and self.Name == "StartBattle" then
+	if getnamecallmethod() == "InvokeServer" and self.Name == "StartBattle" and not Closed then
 		task.spawn(function()
 			repeat task.wait() until workspace.NPCFolders.BaseFolder:FindFirstChild("Red Base")
 			local event
@@ -32,7 +78,6 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 				if hp <= 0 then
 					event:Disconnect()
 					print("DEAD")
-					local String = "--v0.1".."\n".."local TBB = loadstring(game:HttpGet('https://raw.githubusercontent.com/weanyuan/Brick-X/refs/heads/main/Loader'))()".."\n"
 					local LoadoutString = "\n{Base = {"
 					
 
@@ -60,7 +105,8 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 						String = String..TempString
 					end
 					
-					setclipboard(String)
+					LastOperation.Text = "Recording completed"
+					writefile(RecordName..".txt",String)
 				end
 			end)
 		end)
@@ -68,16 +114,23 @@ StartBattle = hookmetamethod(game,"__namecall",function(self,...)
 	return StartBattle(self,unpack(args))
 end)
 
-PlayerSpawn = hookmetamethod(game,"__namecall",function(self,...)
+
+PlayerSpawn = hookmetamethod(game, "__namecall", function(self, ...)
 	local args = {...}
-	if getnamecallmethod() == "InvokeServer" and self.Name == "PlayerSpawn" then
-		task.spawn(function()
-			print("Spawn")
+	local namecallMethod = getnamecallmethod()
+
+	if namecallMethod == "InvokeServer" and self.Name == "PlayerSpawn" and not Closed then
+		local result = PlayerSpawn(self, unpack(args))
+		if result then
+			print("Spawn",args[1],result)
 			local SpawnTime = tick() - Timer
 			Timer = tick()
 			table.insert(Data,{args[1],SpawnTime})
-		end)
+			LastOperation.Text = "Spawn "..args[1].." "..result
+		end
+		return result
 	end
-	return PlayerSpawn(self,unpack(args))
+
+	return PlayerSpawn(self, unpack(args))
 end)
 
