@@ -1,2 +1,2 @@
 # Brick-X
-An auto farm script that supports recording
+An auto farm TBB(The Battel Brick) script that supports recording
